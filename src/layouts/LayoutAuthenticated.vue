@@ -14,16 +14,17 @@ import NavBarItemPlain from "@/components/NavBarItemPlain.vue";
 import AsideMenu from "@/components/AsideMenu.vue";
 import FooterBar from "@/components/FooterBar.vue";
 
+let userData = JSON.parse(localStorage.getItem("userdata"));
 useMainStore().setUser({
-  name: "John Doe",
-  email: "john@example.com",
-  avatar:
-    "https://avatars.dicebear.com/api/avataaars/example.svg?options[top][]=shortHair&options[accessoriesChance]=93",
+  name: localStorage.getItem("user"),
+  email: userData.email,
+  avatar: userData.image
+    ? userData.image
+    : "https://avatars.dicebear.com/api/avataaars/example.svg?options[top][]=shortHair&options[accessoriesChance]=93",
 });
 
 const layoutAsidePadding = "xl:pl-60";
 const auth = useAuthStore();
-
 const styleStore = useStyleStore();
 
 const router = useRouter();

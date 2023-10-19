@@ -6,6 +6,7 @@ import router from "@/router";
 export const useAuthStore = defineStore("auth", () => {
   const token = ref(localStorage.getItem("token"));
   const user = ref(localStorage.getItem("user"));
+  const userdata = ref(localStorage.getItem("userdata"));
 
   function setToken(tokenValue) {
     localStorage.setItem("token", tokenValue);
@@ -15,6 +16,11 @@ export const useAuthStore = defineStore("auth", () => {
   function setUser(userValue) {
     localStorage.setItem("user", userValue);
     user.value = userValue;
+  }
+
+  function setUserData(userDataValue) {
+    localStorage.setItem("userdata", JSON.stringify(userDataValue));
+    userdata.value = userDataValue;
   }
 
   async function checkToken() {
@@ -27,22 +33,25 @@ export const useAuthStore = defineStore("auth", () => {
         },
       })
       .then((res) => {
-        if (res.data) {
-          localStorage.setItem("authenticated", true);
-        }
+        localStorage.setItem("authenticated", res.data.status);
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
-  function logout() {
+  async function logout() {
     token.value = null;
     user.value = null;
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("login");
+    await http.post("auth/logout").then((res) => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("authenticated");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userdata");
+      localStorage.removeItem("companies");
+      router.push("login");
+    });
   }
 
-  return { token, user, setToken, setUser, checkToken, logout };
+  return { token, user, setToken, setUser, setUserData, checkToken, logout };
 });

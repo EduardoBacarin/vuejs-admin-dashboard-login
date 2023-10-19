@@ -9,30 +9,37 @@ import FormControl from "@/components/FormControl.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import LayoutGuest from "@/layouts/LayoutGuest.vue";
-import http from "@/services/http.js";
+import NoAuthHttp from "@/services/NoAuthHttp.js";
 import { useAuthStore } from "@/stores/auth.js";
 import { useRouter } from "vue-router";
+import http from "@/services/http.js";
 
 const router = useRouter();
 const auth = useAuthStore();
 const isAuthenticated = auth.checkToken();
 const form = reactive({
-  email: null,
-  password: null,
+  email: "eduardo.obacarin@gmail.com",
+  password: "12345678",
   remember: true,
 });
 
 async function login() {
-  const { data } = await http.post("auth/login", form);
+  const { data } = await NoAuthHttp.post("auth/login", form);
   if (data.success) {
     auth.setToken(data.data.token);
     auth.setUser(data.data.name);
-    router.push("/dashboard");
+    auth.setUserData(data.data.userdata);
+    getCompanies();
   } else {
     console.log("não logou");
   }
 }
-
+async function getCompanies() {
+  await http.get("companies/").then((res) => {
+    localStorage.setItem("companies", JSON.stringify(res.data.data));
+    router.push("/dashboard");
+  });
+}
 onBeforeMount(() => {
   if (isAuthenticated) router.push("/dashboard");
 });
