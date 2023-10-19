@@ -7,6 +7,7 @@ export const useAuthStore = defineStore("auth", () => {
   const token = ref(localStorage.getItem("token"));
   const user = ref(localStorage.getItem("user"));
   const userdata = ref(localStorage.getItem("userdata"));
+  const isAuth = ref(false);
 
   function setToken(tokenValue) {
     localStorage.setItem("token", tokenValue);
@@ -23,6 +24,11 @@ export const useAuthStore = defineStore("auth", () => {
     userdata.value = userDataValue;
   }
 
+  function setIsAuth(auth) {
+    isAuth.value = auth;
+    if (!auth) setToken(false);
+  }
+
   async function checkToken() {
     const tokenAuth = "Bearer " + token.value;
     let valid = false;
@@ -33,25 +39,38 @@ export const useAuthStore = defineStore("auth", () => {
         },
       })
       .then((res) => {
-        localStorage.setItem("authenticated", res.data.status);
+        if (res.data.status){
+          localStorage.setItem("authenticated", true);
+          isAuth.value = true;
+        }else{
+          clear();
+          isAuth.value = false;
+          throw new Error("Token isn't valid");
+        }
       })
       .catch((error) => {
-        console.log(error);
+        clear();
+        isAuth.value = false;
       });
   }
 
-  async function logout() {
+  function clear(){
     token.value = null;
     user.value = null;
+    isAuth.value = false;
+    localStorage.removeItem("token");
+    localStorage.removeItem("authenticated");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userdata");
+    localStorage.removeItem("companies");
+  }
+
+  async function logout() {
+    clear();
     await http.post("auth/logout").then((res) => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("authenticated");
-      localStorage.removeItem("user");
-      localStorage.removeItem("userdata");
-      localStorage.removeItem("companies");
       router.push("login");
     });
   }
 
-  return { token, user, setToken, setUser, setUserData, checkToken, logout };
+  return { token, user, isAuth, setToken, setUser, setUserData, setIsAuth, checkToken, logout };
 });

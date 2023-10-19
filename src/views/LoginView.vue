@@ -16,7 +16,6 @@ import http from "@/services/http.js";
 
 const router = useRouter();
 const auth = useAuthStore();
-const isAuthenticated = auth.checkToken();
 const form = reactive({
   email: "eduardo.obacarin@gmail.com",
   password: "12345678",
@@ -29,19 +28,24 @@ async function login() {
     auth.setToken(data.data.token);
     auth.setUser(data.data.name);
     auth.setUserData(data.data.userdata);
-    getCompanies();
+    auth.setIsAuth(true);
+    router.push("/dashboard");
   } else {
     console.log("não logou");
   }
 }
 async function getCompanies() {
   await http.get("companies/").then((res) => {
-    localStorage.setItem("companies", JSON.stringify(res.data.data));
+    if (res.data.success){
+      if (res.data.data){
+        localStorage.setItem("companies", JSON.stringify(res.data.data));
+      }
+    }
     router.push("/dashboard");
   });
 }
 onBeforeMount(() => {
-  if (isAuthenticated) router.push("/dashboard");
+  if (auth.isAuth) router.push("/dashboard");
 });
 </script>
 

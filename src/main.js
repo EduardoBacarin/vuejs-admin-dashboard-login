@@ -8,6 +8,7 @@ import { useStyleStore } from "@/stores/style.js";
 import { darkModeKey, styleKey } from "@/config.js";
 
 import "./css/main.css";
+import { useAuthStore } from './stores/auth';
 
 /* Init Pinia */
 const pinia = createPinia();
@@ -22,6 +23,18 @@ const styleStore = useStyleStore(pinia);
 /* Fetch sample data */
 mainStore.fetch("clients");
 mainStore.fetch("history");
+
+if (localStorage.getItem('token')) {
+  (async () => {
+    const auth = useAuthStore(pinia);
+    try {
+      auth.setIsAuth(true);
+      await auth.checkToken();
+    } catch (error) {
+      auth.setIsAuth(false);
+    }
+  })()
+}
 
 /* App style */
 styleStore.setStyle(localStorage[styleKey] ?? "basic");
