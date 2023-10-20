@@ -23,6 +23,16 @@ const routes = [
   },
   {
     meta: {
+      title: "Companies",
+      requiresAuth: true,
+    },
+    path: "/companies",
+    name: "companies",
+    component: () => import("@/views/Companies/IndexView.vue"),
+    props: (route) => ({ page: route.query.page }),
+  },
+  {
+    meta: {
       title: "Tables",
       requiresAuth: true,
     },

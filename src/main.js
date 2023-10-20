@@ -6,15 +6,23 @@ import router from "./router";
 import { useMainStore } from "@/stores/main.js";
 import { useStyleStore } from "@/stores/style.js";
 import { darkModeKey, styleKey } from "@/config.js";
+import { mixin } from "@/mixins.js";
+
+import VueTheMask from "vue-the-mask";
 
 import "./css/main.css";
-import { useAuthStore } from './stores/auth';
+import { useAuthStore } from "./stores/auth";
 
 /* Init Pinia */
 const pinia = createPinia();
 
 /* Create Vue app */
-createApp(App).use(router).use(pinia).mount("#app");
+createApp(App)
+  .mixin(mixin)
+  .use(router)
+  .use(pinia)
+  .use(VueTheMask)
+  .mount("#app");
 
 /* Init Pinia stores */
 const mainStore = useMainStore(pinia);
@@ -24,7 +32,7 @@ const styleStore = useStyleStore(pinia);
 mainStore.fetch("clients");
 mainStore.fetch("history");
 
-if (localStorage.getItem('token')) {
+if (localStorage.getItem("token")) {
   (async () => {
     const auth = useAuthStore(pinia);
     try {
@@ -33,7 +41,7 @@ if (localStorage.getItem('token')) {
     } catch (error) {
       auth.setIsAuth(false);
     }
-  })()
+  })();
 }
 
 /* App style */

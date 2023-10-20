@@ -20,6 +20,11 @@ export default [
     label: "Dashboard",
   },
   {
+    to: "/companies",
+    icon: mdiMonitor,
+    label: "Empresas",
+  },
+  {
     to: "/tables",
     label: "Tables",
     icon: mdiTable,
