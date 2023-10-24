@@ -12,10 +12,11 @@ import LayoutGuest from "@/layouts/LayoutGuest.vue";
 import NoAuthHttp from "@/services/NoAuthHttp.js";
 import { useAuthStore } from "@/stores/auth.js";
 import { useRouter } from "vue-router";
-import http from "@/services/http.js";
+import { useCompanyStore } from '@/stores/company';
 
 const router = useRouter();
 const auth = useAuthStore();
+const companies = useCompanyStore();
 const form = reactive({
   email: "eduardo.obacarin@gmail.com",
   password: "12345678",
@@ -29,20 +30,11 @@ async function login() {
     auth.setUser(data.data.name);
     auth.setUserData(data.data.userdata);
     auth.setIsAuth(true);
+    companies.setCompanies(data.data.companies);
     router.push("/dashboard");
   } else {
     console.log("não logou");
   }
-}
-async function getCompanies() {
-  await http.get("companies/").then((res) => {
-    if (res.data.success){
-      if (res.data.data){
-        localStorage.setItem("companies", JSON.stringify(res.data.data));
-      }
-    }
-    router.push("/dashboard");
-  });
 }
 onBeforeMount(() => {
   if (auth.isAuth) router.push("/dashboard");

@@ -5,6 +5,7 @@ import App from "./App.vue";
 import router from "./router";
 import { useMainStore } from "@/stores/main.js";
 import { useStyleStore } from "@/stores/style.js";
+import { useCompanyStore } from "@/stores/company.js";
 import { darkModeKey, styleKey } from "@/config.js";
 import { mixin } from "@/mixins.js";
 
@@ -27,6 +28,7 @@ createApp(App)
 /* Init Pinia stores */
 const mainStore = useMainStore(pinia);
 const styleStore = useStyleStore(pinia);
+const companyStore = useCompanyStore(pinia);
 
 /* Fetch sample data */
 mainStore.fetch("clients");

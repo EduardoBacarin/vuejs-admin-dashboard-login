@@ -48,6 +48,19 @@ const menuClick = (event, item) => {
     auth.logout();
   }
 };
+
+
+function loadMenu(){
+  if (localStorage.getItem('companies')) {
+    menuNavBar[0].menu = [];
+    JSON.parse(localStorage.getItem('companies')).forEach(element => {
+      menuNavBar[0].menu.push({
+        label: element.register_name
+      })
+    });
+  }
+}
+loadMenu();
 </script>
 
 <template>

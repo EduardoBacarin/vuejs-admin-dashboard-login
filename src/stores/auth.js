@@ -2,12 +2,14 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import http from "@/services/http.js";
 import router from "@/router";
+import { useCompanyStore } from './company';
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref(localStorage.getItem("token"));
   const user = ref(localStorage.getItem("user"));
   const userdata = ref(localStorage.getItem("userdata"));
   const isAuth = ref(false);
+  const companies = useCompanyStore();
 
   function setToken(tokenValue) {
     localStorage.setItem("token", tokenValue);
@@ -62,7 +64,7 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("authenticated");
     localStorage.removeItem("user");
     localStorage.removeItem("userdata");
-    localStorage.removeItem("companies");
+    companies.clear();
   }
 
   async function logout() {
