@@ -1,5 +1,5 @@
 <script setup>
-import { mdiForwardburger, mdiBackburger, mdiMenu } from "@mdi/js";
+import { mdiForwardburger, mdiBackburger, mdiMenu, mdiCheck} from "@mdi/js";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import menuAside from "@/menuAside.js";
@@ -22,13 +22,15 @@ const router = useRouter();
 
 if (auth.isAuth){
   let userData = JSON.parse(localStorage.getItem("userdata"));
-  useMainStore().setUser({
-    name: localStorage.getItem("user"),
-    email: userData.email,
-    avatar: userData.image
-      ? userData.image
-      : "https://avatars.dicebear.com/api/avataaars/example.svg?options[top][]=shortHair&options[accessoriesChance]=93",
-  });
+  // if (typeof useMainStore().userEmail == 'undefined'){
+    useMainStore().setUser({
+      name: localStorage.getItem("user"),
+      email: userData.email,
+      avatar: userData.image != null
+        ? userData.image
+        : "https://avatars.dicebear.com/api/avataaars/example.svg?options[top][]=shortHair&options[accessoriesChance]=93",
+    });
+  // }
 }
 
 const isAsideMobileExpanded = ref(false);
@@ -55,9 +57,25 @@ function loadMenu(){
     menuNavBar[0].menu = [];
     JSON.parse(localStorage.getItem('companies')).forEach(element => {
       menuNavBar[0].menu.push({
-        label: element.register_name
+        label: element.register_name,
+        uuid: element.uuid
       })
     });
+
+    if (localStorage.getItem('company_selected')){
+      menuNavBar[0].label = JSON.parse(localStorage.getItem('company_selected')).register_name
+
+      menuNavBar[0].menu.forEach(element => {
+        if (element.uuid == JSON.parse(localStorage.getItem('company_selected')).uuid){
+          menuNavBar[0].menu[0].icon = mdiCheck;
+        }
+      });
+    }else{
+      localStorage.setItem('company_selected', JSON.stringify(JSON.parse(localStorage.getItem('companies'))[0]))
+      loadMenu();
+    }
+  }else{
+
   }
 }
 loadMenu();

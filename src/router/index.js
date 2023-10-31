@@ -26,10 +26,19 @@ const routes = [
       title: "Companies",
       requiresAuth: true,
     },
-    path: "/companies",
-    name: "companies",
-    component: () => import("@/views/Companies/IndexView.vue"),
-    props: (route) => ({ page: route.query.page }),
+    children: [
+      {
+        path: "/companies",
+        name: "companies",
+        component: () => import("@/views/Companies/IndexView.vue"),
+        props: (route) => ({ page: route.query.page, notification: null }),
+      },
+      {
+        path: '/companies/create',
+        name: "companies-create",
+        component: () => import("@/views/Companies/CreateView.vue")
+      },
+    ],
   },
   {
     meta: {

@@ -14,6 +14,10 @@ defineProps({
     type: String,
     default: null,
   },
+  required: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const slots = useSlots();
@@ -30,15 +34,22 @@ const wrapperClass = computed(() => {
     base.push("md:grid-cols-2");
   }
 
+  if (slotsLength === 3) {
+    base.push("md:grid-cols-3");
+  }
+
   return base;
 });
 </script>
 
 <template>
-  <div class="mb-6 last:mb-0">
-    <label v-if="label" :for="labelFor" class="block font-bold mb-2">{{
-      label
-    }}</label>
+  <div class="mb-3 last:mb-0">
+    <label v-if="label" :for="labelFor" class="block font-bold mb-2">
+      {{ label }}
+      <span class="text-red-500 text-xs">
+        {{ required ? "*" : "" }}
+      </span>
+    </label>
     <div :class="wrapperClass">
       <slot />
     </div>

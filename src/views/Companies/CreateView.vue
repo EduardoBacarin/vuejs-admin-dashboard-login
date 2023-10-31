@@ -1,45 +1,70 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
+import { mdiBallotOutline, mdiAccount, mdiMail, mdiArrowLeft } from "@mdi/js";
 import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
-import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
-import FormFilePicker from "@/components/FormFilePicker.vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
-import SectionTitle from "@/components/SectionTitle.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
-import NotificationBarInCard from "@/components/NotificationBarInCard.vue";
+import cnaeJson from "../../../public/data-sources/cnae.json";
+import router from "@/router";
+import http from "@/services/http"
+import { notify } from "@kyvg/vue3-notification";
 
-const selectOptions = [
-  { id: 1, label: "Business development" },
-  { id: 2, label: "Marketing" },
-  { id: 3, label: "Sales" },
+
+const typeOptions = [
+  { id: "pf", label: "Pessoa Física" },
+  { id: "me", label: "Micro Empresa" },
+  { id: "mei", label: "Micro Empreendedor Individual" },
+  { id: "eireli", label: "Empresa Individual de Responsabilidade Limitada" },
+  { id: "ei", label: "Empresa Individual" },
+  { id: "slu", label: "Sociedade Limitada Unipessoal" },
+  { id: "ss", label: "Sociedade Simples" },
+  { id: "sa", label: "Sociedade Anônima" },
+  { id: "ltda", label: "Sociedade Limitada" },
 ];
 
-const form = reactive({
-  name: "John Doe",
-  email: "john.doe@example.com",
-  phone: "",
-  department: selectOptions[0],
-  subject: "",
-  question: "",
-});
 
-const customElementsForm = reactive({
-  checkbox: ["lorem"],
-  radio: "one",
-  switch: ["one"],
-  file: null,
+const cnaeOptions = cnaeJson;
+
+
+const form = reactive({
+  register_name: "",
+  fantasy_name: "",
+  type: typeOptions[0].id,
+  occupation_area: cnaeOptions[0].id,
 });
 
 const submit = () => {
-  //
+  http.post('companies/store', form).then(res => {
+    if (res.status == 201){
+      notify({
+        type: "success",
+        title: "Sucesso",
+        text: "Empresa cadastrada com sucesso!",
+      });
+      router.push("/companies");
+    }else{
+      notify({
+        type: "error",
+        title: "Erro",
+        text: res.data.message,
+      });
+    }
+  }).catch(error => {
+    console.log(error);
+  })
 };
+
+const clearInputs = () => {
+  form.register_name = "";
+  form.fantasy_name = "";
+  form.type = typeOptions[0];
+  form.occupation_area = cnaeOptions[0];
+}
 
 const formStatusWithHeader = ref(true);
 
@@ -57,126 +82,51 @@ const formStatusSubmit = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton
-        :icon="mdiBallotOutline"
-        title="Forms example"
-        main
-      >
+      <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Cadastrar Empresa" main>
         <BaseButton
-          href="https://github.com/justboil/admin-one-vue-tailwind"
-          target="_blank"
-          :icon="mdiGithub"
-          label="Star on GitHub"
+          :icon="mdiArrowLeft"
+          label="Voltar"
           color="contrast"
           rounded-full
           small
+          @click="router.back"
         />
       </SectionTitleLineWithButton>
       <CardBox form @submit.prevent="submit">
-        <FormField label="Grouped with icons">
-          <FormControl v-model="form.name" :icon="mdiAccount" />
-          <FormControl v-model="form.email" type="email" :icon="mdiMail" />
+        <FormField>
+          <FormField label="Tipo de Empresa" required>
+            <FormControl v-model="form.type" :options="typeOptions" :icon="mdiMail" required/>
+          </FormField>
+
+          <FormField label="Razão Social" required>
+            <FormControl v-model="form.register_name" :icon="mdiAccount" placeholder="Razão Social" required/>
+          </FormField>
+
         </FormField>
-
-        <FormField label="With help line" help="Do not enter the leading zero">
-          <FormControl
-            v-model="form.phone"
-            type="tel"
-            placeholder="Your phone number"
-          />
+        <FormField label="">
+          <FormField label="Nome Fantasia" required>
+            <FormControl v-model="form.fantasy_name" :icon="mdiMail" placeholder="Nome Fantasia" required/>
+          </FormField>
+          <FormField label="Apelido">
+            <FormControl v-model="form.nickname" :icon="mdiMail" placeholder="Apelido" />
+          </FormField>
+          <FormField label="Documento" required>
+            <FormControl v-model="form.document" :icon="mdiAccount" placeholder="CPF ou CNPJ" required/>
+          </FormField>
         </FormField>
-
-        <FormField label="Dropdown">
-          <FormControl v-model="form.department" :options="selectOptions" />
+        <FormField>
+          <FormField label="Data de Fundação">
+            <FormControl v-model="form.foundation_date" type="date" :icon="mdiMail" required/>
+          </FormField>
+          <FormField label="Área de Ocupação / CNAE" required>
+            <FormControl v-model="form.occupation_area" :options="cnaeOptions" :icon="mdiMail" required/>
+          </FormField>
         </FormField>
-
-        <BaseDivider />
-
-        <FormField label="Question" help="Your question. Max 255 characters">
-          <FormControl
-            type="textarea"
-            placeholder="Explain how we can help you"
-          />
-        </FormField>
-
         <template #footer>
           <BaseButtons>
-            <BaseButton type="submit" color="info" label="Submit" />
-            <BaseButton type="reset" color="info" outline label="Reset" />
+            <BaseButton type="submit" color="info" label="Cadastrar" @click="submit()"/>
+            <BaseButton type="reset" color="info" outline label="Limpar" @click="clearInputs()"/>
           </BaseButtons>
-        </template>
-      </CardBox>
-    </SectionMain>
-
-    <SectionTitle>Custom elements</SectionTitle>
-
-    <SectionMain>
-      <CardBox>
-        <FormField label="Checkbox">
-          <FormCheckRadioGroup
-            v-model="customElementsForm.checkbox"
-            name="sample-checkbox"
-            :options="{ lorem: 'Lorem', ipsum: 'Ipsum', dolore: 'Dolore' }"
-          />
-        </FormField>
-
-        <BaseDivider />
-
-        <FormField label="Radio">
-          <FormCheckRadioGroup
-            v-model="customElementsForm.radio"
-            name="sample-radio"
-            type="radio"
-            :options="{ one: 'One', two: 'Two' }"
-          />
-        </FormField>
-
-        <BaseDivider />
-
-        <FormField label="Switch">
-          <FormCheckRadioGroup
-            v-model="customElementsForm.switch"
-            name="sample-switch"
-            type="switch"
-            :options="{ one: 'One', two: 'Two' }"
-          />
-        </FormField>
-
-        <BaseDivider />
-
-        <FormFilePicker v-model="customElementsForm.file" label="Upload" />
-      </CardBox>
-
-      <SectionTitle>Form with status example</SectionTitle>
-
-      <CardBox
-        class="md:w-7/12 lg:w-5/12 xl:w-4/12 shadow-2xl md:mx-auto"
-        is-form
-        is-hoverable
-        @submit.prevent="formStatusSubmit"
-      >
-        <NotificationBarInCard
-          :color="formStatusOptions[formStatusCurrent]"
-          :is-placed-with-header="formStatusWithHeader"
-        >
-          <span
-            ><b class="capitalize">{{
-              formStatusOptions[formStatusCurrent]
-            }}</b>
-            state</span
-          >
-        </NotificationBarInCard>
-        <FormField label="Fields">
-          <FormControl
-            v-model="form.name"
-            :icon-left="mdiAccount"
-            help="Your full name"
-            placeholder="Name"
-          />
-        </FormField>
-
-        <template #footer>
-          <BaseButton label="Trigger" type="submit" color="info" />
         </template>
       </CardBox>
     </SectionMain>

@@ -11,6 +11,7 @@ import {
   mdiResponsive,
   mdiPalette,
   mdiReact,
+  mdiOfficeBuilding
 } from "@mdi/js";
 
 export default [
@@ -21,7 +22,7 @@ export default [
   },
   {
     to: "/companies",
-    icon: mdiMonitor,
+    icon: mdiOfficeBuilding,
     label: "Empresas",
   },
   {

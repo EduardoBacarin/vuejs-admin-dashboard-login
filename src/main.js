@@ -10,6 +10,7 @@ import { darkModeKey, styleKey } from "@/config.js";
 import { mixin } from "@/mixins.js";
 
 import VueTheMask from "vue-the-mask";
+import Notifications from "@kyvg/vue3-notification";
 
 import "./css/main.css";
 import { useAuthStore } from "./stores/auth";
@@ -23,6 +24,7 @@ createApp(App)
   .use(router)
   .use(pinia)
   .use(VueTheMask)
+  .use(Notifications)
   .mount("#app");
 
 /* Init Pinia stores */

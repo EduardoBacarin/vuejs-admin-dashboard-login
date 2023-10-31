@@ -10,6 +10,7 @@ import {
   mdiThemeLightDark,
   mdiGithub,
   mdiReact,
+  mdiCheck
 } from "@mdi/js";
 
 export default [

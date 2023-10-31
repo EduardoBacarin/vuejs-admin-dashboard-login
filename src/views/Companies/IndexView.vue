@@ -1,11 +1,13 @@
 <script setup>
-import { mdiTableBorder, mdiGithub } from "@mdi/js";
+import { mdiPlus, mdiGithub, mdiOfficeBuilding } from "@mdi/js";
 import SectionMain from "@/components/SectionMain.vue";
 import TableCompanies from "@/components/Companies/TableCompanies.vue";
 import CardBox from "@/components/CardBox.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import BaseButton from "@/components/BaseButton.vue";
+import router from "@/router";
+
 </script>
 <script>
 export default {
@@ -24,15 +26,14 @@ export default {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiTableBorder" title="Tables" main>
+      <SectionTitleLineWithButton :icon="mdiOfficeBuilding" title="Empresas" main>
         <BaseButton
-          href="https://github.com/justboil/admin-one-vue-tailwind"
-          target="_blank"
-          :icon="mdiGithub"
-          label="Star on GitHub"
+          :icon="mdiPlus"
+          label="Cadastrar nova empresa"
           color="contrast"
           rounded-full
           small
+          @click="router.push('companies/create')"
         />
       </SectionTitleLineWithButton>
 

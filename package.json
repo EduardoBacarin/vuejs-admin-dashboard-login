@@ -8,6 +8,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@kyvg/vue3-notification": "^3.0.2",
     "@mdi/js": "^7.0.96",
     "@rushstack/eslint-patch": "^1.1.4",
     "axios": "^0.27.0",

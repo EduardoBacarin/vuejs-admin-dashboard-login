@@ -31,7 +31,7 @@ async function login() {
     auth.setUserData(data.data.userdata);
     auth.setIsAuth(true);
     companies.setCompanies(data.data.companies);
-    router.push("/dashboard");
+    window.location = window.location.origin + "/dashboard"
   } else {
     console.log("não logou");
   }

@@ -121,7 +121,7 @@ onMounted(() => {
       {{ checkedRow.register_name }}
     </span>
   </div>
-  <template v-if="items.data">
+  <template v-if="items">
     <table>
       <thead>
         <tr>
