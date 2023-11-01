@@ -70,7 +70,7 @@ export const useAuthStore = defineStore("auth", () => {
   async function logout() {
     clear();
     await http.post("auth/logout").then((res) => {
-      router.push("login");
+      router.push("/login");
     });
   }
 
